@@ -5,22 +5,13 @@ int Heap[99];
 int n; //힙의 크기, 현재 키의 개수
 
 
-
-void buildHeap() {
-
-	for (int i = n / 2; i >= 1; i--) {
-		downHeap(i);
-	}
-
-}
-
 void downHeap(int v) {
 	int left_child = 2 * v;
 	int right_child = 2 * v + 1;
 
 	// isleaf ?
 	// 현재노드의 자식노드가 없다면 return
-	if (left_child > n) { 
+	if (left_child > n) {
 		return;
 	}
 
@@ -43,19 +34,29 @@ void downHeap(int v) {
 
 }
 
+void buildHeap() {
+
+	for (int i = n / 2; i >= 1; i--) {
+		downHeap(i);
+	}
+
+}
+
+
+
 void printHeap() {
-	for (int i = 1; i < n+1; i++) {
+	for (int i = 1; i < n + 1; i++) {
 		printf(" %d", Heap[i]);
 	}
 	printf("\n");
 }
 int main() {
-	
+
 	scanf("%d", &n);
 	//Heap의 인덱스 0은 비워둔다
 
-	for(int i=1;i<=n;i++){
-	scanf("%d",&Heap[i])
+	for (int i = 1; i <= n; i++) {
+		scanf("%d", &Heap[i]);
 	}
 	buildHeap();
 	printHeap();
