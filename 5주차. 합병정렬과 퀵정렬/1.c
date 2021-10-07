@@ -1,108 +1,115 @@
 #pragma warning(disable:4996)
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+typedef struct node {
+	struct node* next;
+	int data;
+}NODE;
 
-typedef struct index {
-	int a;
-	int b;
-}IDX;
+typedef struct part {
+	NODE* L1;
+	NODE* L2;
+}PART;
 
-int findPivot(int* arr, int l, int r) {
-	int k;
-	srand(time(NULL));
-	//무작위 피벗 선택
-	k = rand() % (r - l + 1) + l; // l에서 r까지
-	return k;
+NODE* makenode(int data) {
+	//make a new_node
+	NODE* new = malloc(sizeof(NODE));
+	new->data = data;
+	new->next = NULL;
+
+	return new;
 }
 
-IDX inPlacePartition(int* arr, int l, int r, int k) {
-	IDX res;
-
-	int p = arr[k]; //피벗설정
-	// hide pivot
-	int temp = arr[k];
-	arr[k] = arr[r];
-	arr[r] = temp;
-
-	int i = l;
-	int j = r - 1;
-
-	//엇갈릴때까지 분할
-	while (i <= j) {
-
-		// left에서 큰 원소가 있는지 검사 
-		while (i <= j && arr[i] <= p) {
-			i++;
-		}
-		// right에서 작은 원소가 있는지 검사
-		while (i <= j && arr[j] >= p) {
-			j--;
-		}
-
-		// 위에서 발견된 것이 있다면 swap
-		if (i < j) {
-			temp = arr[i];
-			arr[i] = arr[j];
-			arr[j] = temp;
-		}
+//L을 크기 size와 |L|-size 두개로 분할
+PART partition(NODE* L, int size) {
+	PART part;
+	NODE* L1, * L2;
+	NODE* cur = L;
+	L1 = L;
+	//cur은 이미 첫번째원소를 가리키는 상태
+	//따라서 size의 크기를 위해서 size - 1 만큼 리스트 순회
+	for (int i = 0; i < size - 1; i++) {
+		cur = cur->next;
 	}
-	//while문을 나왔다는건 엇갈렸다는 뜻
-	//피벗의 역할이 끝났으므로, arr[i]에 피벗을 넣고
-	// LT, EQ, GT로 분할
-	temp = arr[i];
-	arr[i] = arr[r];
-	arr[r] = temp;
 
-	//피벗은 현재 인덱스 i에 위치함
-	//피벗과 같은 원소가 얼마나 있는지 알아내야한다
+	//L2는 리스트의 크기에서 size를 뺀것
+	L2 = cur->next;
+	cur->next = NULL;// cur->next가 NULL이므로, L1의 크기는 size가 됨
 
-	//LT는 l부터 a-1
-	res.a = i;
+	//반환을 위해 구조체에 담아서 반환
+	part.L1 = L1;
+	part.L2 = L2;
 
+	return part;
+}
 
-	j = r - 1; //다시 리스트의 끝을 지정, 여기 r은 안되나?
+NODE* merge(NODE* L1, NODE* L2) {
+	NODE* res = NULL;
+	//2차선 도로의 차들이 1차선으로 합쳐지는 원리
 
-	//피벗과 같은 원소가 있다면
-	while (i <= j && arr[i] == p) {
-		i++;
+	//base case
+	if (L1 == NULL) return L2;
+	else if (L2 == NULL) return L1;
+
+	//recursive case
+	if (L1->data < L2->data) {
+		res = L1;
+		res->next = merge(L1->next, L2);
 	}
-	res.b = i;
-
+	else {
+		res = L2;
+		res->next = merge(L2->next, L1);
+	}
 	return res;
 }
 
-void inPlaceQuickSort(int *arr, int l,int r) {
+void mergeSort(NODE** L, int size) {
+	NODE* L1 = NULL, * L2 = NULL;
+	PART res;
 
-	if (l >= r) return;
-	IDX res;
-	int k = findPivot(arr, l, r);
-	res = inPlacePartition(arr, l, r, k);
-	inPlaceQuickSort(arr, l, (res.a) - 1);
-	inPlaceQuickSort(arr, (res.b)+1, r);
+	//base case, size >1
+	if (size > 1 && *L != NULL) {
+		//1번 분할파트
+		res = partition(*L, size / 2);
+		L1 = res.L1;
+		L2 = res.L2;
 
+		//2번 재귀파트
+		mergeSort(&L1, size / 2);
+		mergeSort(&L2, size - (size / 2));
+
+		//3번 병합파트
+		*L = merge(L1, L2);
+	}
 }
 
+void print(NODE* L) {
+
+	while (L != NULL) {
+		printf(" %d", L->data);
+		L = L->next;
+	}
+
+}
 
 int main() {
-	int n,*arr;
+	int n, data;
+	//head 노드에는 데이터를 담지 않는다
+	NODE* head = (NODE*)malloc(sizeof(NODE));
+	head->next = NULL;
 	scanf("%d", &n);
-	arr = (int*)malloc(sizeof(int) * n);
-
+	//make list L
+	NODE* cur = head;
 	for (int i = 0; i < n; i++) {
-		scanf("%d", &arr[i]);
+		scanf("%d", &data);
+		cur->next = makenode(data);
+		cur = cur->next;
 	}
 
-	//QuickSort 수행
-	inPlaceQuickSort(arr, 0, n - 1);
-    
-	//정렬후 print
-	for (int i = 0; i < n; i++){
-		printf(" %d", arr[i]);
-	}
 
-	//메모리반납
-	free(arr);
+	//recursive merge sort 
+	mergeSort(&head->next, n);
+	print(head->next);
+	// merge L1, L2
+
 }
-
-
