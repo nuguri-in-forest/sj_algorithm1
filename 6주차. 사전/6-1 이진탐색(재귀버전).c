@@ -8,13 +8,13 @@ int rFE(int* L, int k, int l, int r) {
 
 	if (k == L[mid]) return mid;//ÀÎµ¦½º¹İÈ¯
 	else if (k < L[mid]) {
-		rFE(L, k,l, mid - 1);
+		rFE(L, k, l, mid - 1);
 	}
 	else {
 		rFE(L, k, mid + 1, r);
 	}
 }
-int findElement(int* L, int k,int n) {
+int findElement(int* L, int k, int n) {
 	return rFE(L, k, 0, n - 1);
 }
 int main() {
@@ -26,7 +26,8 @@ int main() {
 	for (int i = 0; i < n; i++) {
 		scanf("%d", &L[i]);
 	}
-	
-	int res = findElement(L, k,n);
+
+	int res = findElement(L, k, n);
 	printf(" %d", res);
+	free(L);
 }

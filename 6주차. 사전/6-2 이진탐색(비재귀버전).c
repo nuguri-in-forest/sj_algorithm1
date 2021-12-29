@@ -1,14 +1,15 @@
 #pragma warning(disable:4996)
 #include <stdio.h>
 #include <stdlib.h>
+// 이진탐색 비재귀로 구현
 int findElement(int* L, int k, int n) {
-	int l,r,mid;
+	int l, r, mid;
 	l = 0;
 	r = n - 1;
-	mid = (l + r)/2;
-	
+	mid = (l + r) / 2;
+
 	while (l <= r) {
-		
+
 		if (k == L[mid]) {
 			return mid;
 		}
@@ -40,4 +41,5 @@ int main() {
 	int res = findElement(L, k, n);
 
 	printf(" %d", res);
+	free(L);
 }

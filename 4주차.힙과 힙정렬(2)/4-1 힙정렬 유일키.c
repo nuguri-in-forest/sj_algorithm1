@@ -9,7 +9,7 @@ int n;
 void upHeap(int i) {
 	//base case는 루트노드에 도달했을떄
 	if (i == 1) return;
-	
+
 	//부모노드 설정
 	int parent = i / 2;
 
@@ -33,7 +33,7 @@ void insertItem(int key) {
 
 }
 
-void downHeap(int i,int last) {
+void downHeap(int i, int last) {
 	int left = 2 * i;
 	int right = 2 * i + 1;
 
@@ -49,7 +49,7 @@ void downHeap(int i,int last) {
 			larger = right;
 		}
 	}
-	
+
 
 	//자식노드와 현재노드 swap
 	if (Heap[i] < Heap[larger]) {
@@ -77,7 +77,7 @@ void inPlaceHeapSort() {
 
 }
 void printArray() {
-	for(int i = 1; i <= n; i++) {
+	for (int i = 1; i <= n; i++) {
 		printf(" %d", Heap[i]);
 	}
 }
@@ -92,7 +92,7 @@ int main() {
 		scanf("%d", &key);//key를 입력받고
 		insertItem(key); //삽입
 	}
-	
+
 	//phase2 제자리 힙 정렬
 	inPlaceHeapSort();
 

@@ -1,10 +1,11 @@
 #pragma warning(disable:4996)
 #include <stdio.h>
 #include <stdlib.h>
+//이진탐색 응용
 int main() {
 	int a, b, c;
 	scanf("%d %d %d", &a, &b, &c);
-	char ch,tmp;
+	char ch, tmp;
 	int m = 0;
 	scanf("%c", &tmp);
 	for (int i = 0; i < c; i++) {

@@ -7,98 +7,95 @@ typedef struct node {
 }NODE;
 
 typedef struct part {
-	NODE* L1;
-	NODE* L2;
+	struct NODE* L1;
+	struct NODE* L2;
 }PART;
 
 NODE* makenode(int data) {
-	//make a new_node
 	NODE* new = malloc(sizeof(NODE));
-	new->data = data;
 	new->next = NULL;
-
+	new->data = data;
 	return new;
 }
 
-//L을 크기 size와 |L|-size 두개로 분할
 PART partition(NODE* L, int size) {
-	PART part;
-	NODE* L1, * L2;
+	PART res;
+	NODE* L1 = L, * L2;
+
+	//L1 , L2 분리
 	NODE* cur = L;
-	L1 = L;
-	//cur은 이미 첫번째원소를 가리키는 상태
-	//따라서 size의 크기를 위해서 size - 1 만큼 리스트 순회
+
+	//이미 크기는 1이므로, size-1만큼 이동해야함
 	for (int i = 0; i < size - 1; i++) {
 		cur = cur->next;
 	}
 
-	//L2는 리스트의 크기에서 size를 뺀것
-	L2 = cur->next;
-	cur->next = NULL;// cur->next가 NULL이므로, L1의 크기는 size가 됨
+	//여기서 cur은 size 의 크기
+	L2 = cur->next; //L2는 cur->next, 즉 |L2| = |L|-size
+	cur->next = NULL;// L1의 크기는 size
 
-	//반환을 위해 구조체에 담아서 반환
-	part.L1 = L1;
-	part.L2 = L2;
-
-	return part;
+	//반환
+	res.L1 = L1;
+	res.L2 = L2;
+	return res;
 }
-
 NODE* merge(NODE* L1, NODE* L2) {
 	NODE* res = NULL;
-	//2차선 도로의 차들이 1차선으로 합쳐지는 원리
 
 	//base case
+	//L1이나 L2가 null일때
 	if (L1 == NULL) return L2;
 	else if (L2 == NULL) return L1;
-
 	//recursive case
+
 	if (L1->data < L2->data) {
 		res = L1;
 		res->next = merge(L1->next, L2);
 	}
 	else {
 		res = L2;
-		res->next = merge(L2->next, L1);
+		res->next = merge(L1, L2->next);
 	}
 	return res;
 }
-
 void mergeSort(NODE** L, int size) {
+	PART res; //분할된 두 리스트를 전달받기위함
 	NODE* L1 = NULL, * L2 = NULL;
-	PART res;
 
-	//base case, size >1
+	//base case 지정
 	if (size > 1 && *L != NULL) {
-		//1번 분할파트
+		//분할
 		res = partition(*L, size / 2);
 		L1 = res.L1;
 		L2 = res.L2;
 
-		//2번 재귀파트
+		//재귀 
 		mergeSort(&L1, size / 2);
 		mergeSort(&L2, size - (size / 2));
 
-		//3번 병합파트
+		//합병
 		*L = merge(L1, L2);
 	}
 }
 
 void print(NODE* L) {
-
-	while (L != NULL) {
-		printf(" %d", L->data);
-		L = L->next;
+	NODE* cur = L;
+	while (cur != NULL) {
+		printf(" %d", cur->data);
+		cur = cur->next;
 	}
 
 }
-
 int main() {
-	int n, data;
-	//head 노드에는 데이터를 담지 않는다
-	NODE* head = (NODE*)malloc(sizeof(NODE));
+	int n;
+	//head에는 데이터를 담지 않는다
+	NODE* head = malloc(sizeof(NODE));
 	head->next = NULL;
+
 	scanf("%d", &n);
-	//make list L
+
+	//연결리스트 생성
+	int data;
 	NODE* cur = head;
 	for (int i = 0; i < n; i++) {
 		scanf("%d", &data);
@@ -106,10 +103,7 @@ int main() {
 		cur = cur->next;
 	}
 
-
-	//recursive merge sort 
 	mergeSort(&head->next, n);
 	print(head->next);
-	// merge L1, L2
-
+	free(head);
 }
